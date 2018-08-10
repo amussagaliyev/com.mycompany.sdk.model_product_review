@@ -19,11 +19,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mycompany.model.product.Product;
 
 @Entity
-@Table(name="MwbProductReview")
+@Table(name="Production.ProductReview")
 public class ProductReview
 {
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="MwbProductReviewSeq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ProductReviewID")
 	private Integer productReviewID;
 	
@@ -39,7 +39,7 @@ public class ProductReview
 	@Column(name="ReviewerName")
 	private String reviewerName;
 
-	@Column(name = "ReviewDate")
+	@Column(name = "ReviewDate", insertable=false)
 	private Date reviewDate;
 
 	@JsonProperty("email")
