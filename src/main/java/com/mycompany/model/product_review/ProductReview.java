@@ -1,6 +1,7 @@
 package com.mycompany.model.product_review;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -51,6 +53,9 @@ public class ProductReview
 
 	@Column(name = "Comments")
 	private String comments;
+	
+	@OneToMany(mappedBy="ProductReviewID")
+	private List<ProductReviewStatus> productReviewStatuses;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "ModifiedDate", insertable=false)
@@ -145,7 +150,29 @@ public class ProductReview
 	{
 		this.modifiedDate = modifiedDate;
 	}
-	
 
+	public List<ProductReviewStatus> getProductReviewStatuses()
+	{
+		return productReviewStatuses;
+	}
+
+	public void setProductReviewStatuses(List<ProductReviewStatus> productReviewStatuses)
+	{
+		this.productReviewStatuses = productReviewStatuses;
+	}
+	
+	@Transient
+	public ProductReviewStatus getCurrentProductReviewStatus()
+	{
+		return getProductReviewStatuses().stream()
+			.filter(a -> a.getIsLast())
+				.findFirst().get();
+	}
+
+	@Transient
+	public Status getCurrentStatus()
+	{
+		return getCurrentProductReviewStatus().getStatus();
+	}
 
 }
