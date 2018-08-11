@@ -1,8 +1,10 @@
 package com.mycompany.model.product_review;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -54,7 +56,7 @@ public class ProductReview
 	@Column(name = "Comments")
 	private String comments;
 	
-	@OneToMany(mappedBy="ProductReviewID")
+	@OneToMany(mappedBy="productReview", cascade=CascadeType.ALL)
 	private List<ProductReviewStatus> productReviewStatuses;
 	
 	@Temporal(TemporalType.DATE)
@@ -153,6 +155,8 @@ public class ProductReview
 
 	public List<ProductReviewStatus> getProductReviewStatuses()
 	{
+		if (productReviewStatuses == null)
+			productReviewStatuses = new ArrayList<>();
 		return productReviewStatuses;
 	}
 
@@ -166,8 +170,22 @@ public class ProductReview
 	{
 		return getProductReviewStatuses().stream()
 			.filter(a -> a.getIsLast())
-				.findFirst().get();
+				.findFirst().orElse(null);
 	}
+
+	@Transient
+	public void setCurrentProductReviewStatus(ProductReviewStatus productReviewStatus)
+	{
+		ProductReviewStatus currentStatus = getCurrentProductReviewStatus();
+		if (currentStatus != null)
+		{
+			currentStatus.setEndDate(new Date());
+			currentStatus.setIsLast(false);
+		}
+		productReviewStatuses.add(productReviewStatus);
+		productReviewStatus.setProductReview(this);
+	}
+
 
 	@Transient
 	public Status getCurrentStatus()

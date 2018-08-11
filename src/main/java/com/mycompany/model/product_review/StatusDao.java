@@ -20,7 +20,7 @@ public class StatusDao extends AbstractDao
 		CriteriaQuery<Status> criteriaQuery = criteriaBuilder.createQuery(Status.class);
 		Root<Status> root = criteriaQuery.from(Status.class);
 		ParameterExpression<String> parameter = criteriaBuilder.parameter(String.class);
-		criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("Code"),  parameter));
+		criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("code"),  parameter));
 		TypedQuery<Status> query = session().createQuery(criteriaQuery);
 		query.setParameter(parameter, code);
 		
