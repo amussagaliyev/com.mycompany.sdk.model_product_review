@@ -28,13 +28,13 @@ public class ProductReviewStatus
 	@JoinColumn(name="StatusID")
 	private Status status;
 
-	@Column(name="StartDate", nullable=false, insertable=false)
+	@Column(name="StartDate", nullable=false, insertable=false, updatable=false)
 	private Date startDate;
 	
 	@Column(name="EndDate", insertable=false)
 	private Date endDate;
 
-	@Column(name="IsLast", nullable=false, insertable=false)
+	@Column(name="IsLast", nullable=false)
 	private Boolean isLast;
 
 	@Column(name="Comments")

@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -19,7 +20,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.Formula;
+
 import com.mycompany.model.product.Product;
 
 @Entity
@@ -36,17 +38,14 @@ public class ProductReview
 	private Product product;
 	
 	@Transient
-	@JsonProperty("productid")
 	private Integer productID;
 
-	@JsonProperty("name")
 	@Column(name="ReviewerName")
 	private String reviewerName;
 
 	@Column(name = "ReviewDate", insertable=false)
 	private Date reviewDate;
 
-	@JsonProperty("email")
 	@Column(name = "EmailAddress")
 	private String emailAddress;
 
@@ -56,13 +55,13 @@ public class ProductReview
 	@Column(name = "Comments")
 	private String comments;
 	
-	@OneToMany(mappedBy="productReview", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="productReview", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	private List<ProductReviewStatus> productReviewStatuses;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "ModifiedDate", insertable=false)
 	private Date modifiedDate;
-
+	
 	public Integer getProductReviewID()
 	{
 		return productReviewID;
@@ -165,32 +164,13 @@ public class ProductReview
 		this.productReviewStatuses = productReviewStatuses;
 	}
 	
-	@Transient
 	public ProductReviewStatus getCurrentProductReviewStatus()
 	{
-		return getProductReviewStatuses().stream()
-			.filter(a -> a.getIsLast())
-				.findFirst().orElse(null);
+		return getProductReviewStatuses().stream().filter(a -> a.getIsLast()).findFirst().orElse(null);
 	}
-
-	@Transient
-	public void setCurrentProductReviewStatus(ProductReviewStatus productReviewStatus)
+	
+	public void addProductReviewStatus(ProductReviewStatus currentProductReviewStatus)
 	{
-		ProductReviewStatus currentStatus = getCurrentProductReviewStatus();
-		if (currentStatus != null)
-		{
-			currentStatus.setEndDate(new Date());
-			currentStatus.setIsLast(false);
-		}
-		productReviewStatuses.add(productReviewStatus);
-		productReviewStatus.setProductReview(this);
+		getProductReviewStatuses().add(currentProductReviewStatus);
 	}
-
-
-	@Transient
-	public Status getCurrentStatus()
-	{
-		return getCurrentProductReviewStatus().getStatus();
-	}
-
 }
