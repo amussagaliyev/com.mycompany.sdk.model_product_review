@@ -1,18 +1,13 @@
 package com.mycompany.model.product_review;
 
-import javax.persistence.Query;
+import java.util.Optional;
 
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.mycompany.model.core.AbstractDao;
-
 @Repository
-public class StatusDao extends AbstractDao<Status>
+public interface StatusDao extends CrudRepository<Status, Integer>
 {
-	public Status getByCode(String code)
-	{
-		Query query = entityManager().createNamedQuery("Status.getByCode", Status.class).setParameter("code", code);
-		return (Status) query.getSingleResult();
-	}
+	public Optional<Status> findByCode(String code);
 	
 }
